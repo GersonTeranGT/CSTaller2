@@ -38,3 +38,10 @@ def pokemon_update(request, id):
     else:
         form = PokemonForm(instance=pokemon)
     return render(request, "pokemons/pokemon_form.html", {"form": form})
+
+def pokemon_delete(request, id):
+    pokemon = get_object_or_404(Pokemon, id=id)
+    if request.method == "POST":
+        pokemon.delete()
+        return redirect("pokemon_list")
+    return render(request, "pokemons/pokemon_delete.html", {"pokemon": pokemon})

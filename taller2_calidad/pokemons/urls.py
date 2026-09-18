@@ -6,4 +6,5 @@ urlpatterns = [
     path("pokemon/<int:id>", pokemon_detail, name="pokemon_detail"),
     path("pokemon/create", pokemon_create, name="pokemon_create"),
     path("pokemon/update/<int:id>", pokemon_update, name="pokemon_update"),
+    path("pokemon/delete/<int:id>", pokemon_delete, name="pokemon_delete"),
 ]
