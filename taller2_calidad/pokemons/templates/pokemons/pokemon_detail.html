@@ -34,6 +34,9 @@
             <a class="btn btn-success" href="{% url 'pokemon_update' pokemon.id %}" role="button">
                 Editar Pokémon
             </a>
+            <a class="btn btn-danger" href="{% url 'pokemon_delete' pokemon.id %}" role="button">
+                Eliminar Pokémon
+            </a>
             <a class="btn btn-primary" href="{% url 'pokemon_list' %}" role="button">
                 Regresar a la lista
             </a>

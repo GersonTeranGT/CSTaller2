@@ -22,7 +22,7 @@ def get_pokemon_detail(url: str) -> dict | None:
     return response.json()
 
 
-def load_pokemons(limit: int = 1025) -> str:
+def load_pokemons(limit: int = 1351) -> str:
     """carga los pokemones desde la api a la base de datos solo si esta vacia"""
     if Pokemon.objects.count():
         return "Ya existen pokemones cargados"
