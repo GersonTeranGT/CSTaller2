@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ pokemon.name }}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid text-center">
+    <h1 class="text-capitalize">{{ pokemon.name }}</h1>
+
+    <div class="row justify-content-evenly">
+        <div class="col-4">
+            <img src="{{ pokemon.image }}" alt="{{ pokemon.name }}" style="width: 300px; image-rendering: pixelated;" />
+        </div>
+        <div class="col-4 text-start">
+            <h3>Altura: {{ pokemon.height }} / 10 m</h3>
+            <h3>Peso: {{ pokemon.weight }} / 10 kg</h3>
+
+            <p>
+                <strong>Tipos:</strong>
+                {% for type in pokemon.types.all %}
+                {{ type.name }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </p>
+
+            <p>
+                <strong>Habilidades:</strong>
+                {% for ability in pokemon.abilities.all %}
+                {{ ability.name }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </p>
+
+
+            <a class="btn btn-success" href="{% url 'pokemon_update' pokemon.id %}" role="button">
+                Editar Pokémon
+            </a>
+            <a class="btn btn-primary" href="{% url 'pokemon_list' %}" role="button">
+                Regresar a la lista
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
