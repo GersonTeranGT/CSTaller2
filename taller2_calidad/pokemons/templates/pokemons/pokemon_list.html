@@ -1,131 +1,263 @@
 {% extends "base.html" %}
 
-{% block title %}Pokémones{% endblock %}
+{% block title %}Pokedex — Lista{% endblock %}
 
 {% block content %}
-<div class="container-fluid text-center">
-    <h1>Lista de Pokemones</h1>
 
-    <a class="btn btn-success m-3" href="{% url 'pokemon_create' %}">
-        Crear Pokemon
+<div class="text-center mb-4">
+    <h1 class="page-title display-5 mb-3">Lista de Pokemones</h1>
+    <a href="{% url 'pokemon_create' %}" class="btn btn-create btn-lg fw-bold shadow px-4">
+        <i class="bi bi-plus-circle-fill"></i> Crear Pokemon
     </a>
-    <!--paginacion bootstrap-->
-    <nav aria-label="Page navigation example" class="mt-4">
-        <ul class="pagination justify-content-center flex-wrap">
+</div>
 
-            <!--boton anterior-->
-            {% if pokemons.has_previous %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ pokemons.previous_page_number }}" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </li>
-            {% else %}
-            <li class="page-item disabled">
-                <span class="page-link">&laquo;</span>
-            </li>
-            {% endif %}
+<nav aria-label="Paginación" class="mt-3 mb-4">
+    <ul class="pagination justify-content-center flex-wrap gap-1">
+        {% if pokemons.has_previous %}
+        <li class="page-item">
+            <a class="page-link rounded-pill" href="?page={{ pokemons.previous_page_number }}">&laquo;</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link rounded-pill">&laquo;</span></li>
+        {% endif %}
 
-            <!--paginas con rango-->
-            {% for num in pokemons.paginator.page_range %}
+        {% for num in pokemons.paginator.page_range %}
             {% if num == pokemons.number %}
-            <li class="page-item active">
-                <span class="page-link">{{ num }}</span>
-            </li>
-            {% elif num > pokemons.number|add:'-3' and num < pokemons.number|add:'3' %} <li class="page-item">
-                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                </li>
-                {% elif num == 1 or num == pokemons.paginator.num_pages %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                </li>
-                {% endif %}
-                {% endfor %}
+            <li class="page-item active"><span class="page-link rounded-pill">{{ num }}</span></li>
+            {% elif num > pokemons.number|add:'-3' and num < pokemons.number|add:'3' %}
+            <li class="page-item"><a class="page-link rounded-pill" href="?page={{ num }}">{{ num }}</a></li>
+            {% elif num == 1 or num == pokemons.paginator.num_pages %}
+            <li class="page-item"><a class="page-link rounded-pill" href="?page={{ num }}">{{ num }}</a></li>
+            {% endif %}
+        {% endfor %}
 
-                <!--boton siguiente-->
-                {% if pokemons.has_next %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ pokemons.next_page_number }}" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
+        {% if pokemons.has_next %}
+        <li class="page-item">
+            <a class="page-link rounded-pill" href="?page={{ pokemons.next_page_number }}">&raquo;</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link rounded-pill">&raquo;</span></li>
+        {% endif %}
+    </ul>
+</nav>
+
+<div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-4">
+    {% for pokemon in pokemons %}
+    <div class="col">
+        <div class="card h-100 border-0 pokemon-card text-center">
+
+            <span class="poke-number">#{{ pokemon.id|stringformat:"04d" }}</span>
+
+            <div class="card-img-wrapper pt-3">
+                <div class="poke-glow"></div>
+                <img src="{{ pokemon.image }}"
+                     class="card-img-top mx-auto d-block poke-img"
+                     alt="{{ pokemon.name }}">
+            </div>
+
+            <div class="card-body d-flex flex-column justify-content-between p-3">
+
+                <h6 class="card-title text-capitalize fw-bold mb-2">{{ pokemon.name }}</h6>
+
+                <div class="mb-3">
+                    {% for type in pokemon.types.all %}
+                        <span class="type-badge type-{{ type.name|lower }}">{{ type.name }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="d-grid gap-2">
+                    <a href="{% url 'pokemon_detail' pokemon.id %}" class="btn btn-sm btn-primary fw-semibold">
+                        <i class="bi bi-eye-fill"></i> Ver
                     </a>
-                </li>
-                {% else %}
-                <li class="page-item disabled">
-                    <span class="page-link">&raquo;</span>
-                </li>
-                {% endif %}
-
-        </ul>
-    </nav>
-    <div class="d-flex flex-wrap justify-content-center gap-5">
-        {% for pokemon in pokemons %}
-        <div class="card" style="width: 18rem;">
-            <img src="{{ pokemon.image }}" class="card-img-top img-fluid p-3" alt="{{ pokemon.name }}"
-                style="height: 200px; width: fit-content; margin: auto; image-rendering: pixelated;">
-
-            <div class="card-body d-flex flex-column justify-content-between">
-                <h5 class="card-title text-capitalize">{{ pokemon.name }}</h5>
-                <a class="btn btn-danger" href="{% url 'pokemon_delete' pokemon.id %}" role="button">
-                    Eliminar Pokémon
-                </a>
-                <a href="{% url 'pokemon_update' pokemon.id %}" class="btn btn-success m-3">
-                    Editar Pokémon
-                </a>
-                <a href="{% url 'pokemon_detail' pokemon.id %}" class="btn btn-primary">
-                    Ver detalles
-                </a>
+                    <a href="{% url 'pokemon_update' pokemon.id %}" class="btn btn-sm btn-success fw-semibold">
+                        <i class="bi bi-pencil-fill"></i> Editar
+                    </a>
+                    <a href="{% url 'pokemon_delete' pokemon.id %}" class="btn btn-sm btn-danger fw-semibold">
+                        <i class="bi bi-trash-fill"></i> Eliminar
+                    </a>
+                </div>
             </div>
         </div>
-        {% endfor %}
     </div>
-
-    <!--paginacion bootstrap-->
-    <nav aria-label="Page navigation example" class="mt-4">
-        <ul class="pagination justify-content-center flex-wrap">
-
-            <!--boton anterior-->
-            {% if pokemons.has_previous %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ pokemons.previous_page_number }}" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </li>
-            {% else %}
-            <li class="page-item disabled">
-                <span class="page-link">&laquo;</span>
-            </li>
-            {% endif %}
-
-            <!--paginas con rango-->
-            {% for num in pokemons.paginator.page_range %}
-            {% if num == pokemons.number %}
-            <li class="page-item active">
-                <span class="page-link">{{ num }}</span>
-            </li>
-            {% elif num > pokemons.number|add:'-3' and num < pokemons.number|add:'3' %} <li class="page-item">
-                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                </li>
-                {% elif num == 1 or num == pokemons.paginator.num_pages %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                </li>
-                {% endif %}
-                {% endfor %}
-
-                <!--boton siguiente-->
-                {% if pokemons.has_next %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ pokemons.next_page_number }}" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
-                </li>
-                {% else %}
-                <li class="page-item disabled">
-                    <span class="page-link">&raquo;</span>
-                </li>
-                {% endif %}
-
-        </ul>
-    </nav>
+    {% endfor %}
 </div>
+
+<nav aria-label="Paginación" class="mt-5">
+    <ul class="pagination justify-content-center flex-wrap gap-1">
+        {% if pokemons.has_previous %}
+        <li class="page-item">
+            <a class="page-link rounded-pill" href="?page={{ pokemons.previous_page_number }}">&laquo;</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link rounded-pill">&laquo;</span></li>
+        {% endif %}
+
+        {% for num in pokemons.paginator.page_range %}
+            {% if num == pokemons.number %}
+            <li class="page-item active"><span class="page-link rounded-pill">{{ num }}</span></li>
+            {% elif num > pokemons.number|add:'-3' and num < pokemons.number|add:'3' %}
+            <li class="page-item"><a class="page-link rounded-pill" href="?page={{ num }}">{{ num }}</a></li>
+            {% elif num == 1 or num == pokemons.paginator.num_pages %}
+            <li class="page-item"><a class="page-link rounded-pill" href="?page={{ num }}">{{ num }}</a></li>
+            {% endif %}
+        {% endfor %}
+
+        {% if pokemons.has_next %}
+        <li class="page-item">
+            <a class="page-link rounded-pill" href="?page={{ pokemons.next_page_number }}">&raquo;</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link rounded-pill">&raquo;</span></li>
+        {% endif %}
+    </ul>
+</nav>
+
+<style>
+    .btn-create {
+        background: linear-gradient(135deg, #00c853 0%, #64dd17 100%);
+        border: none;
+        color: #fff;
+        transition: all .3s ease;
+        box-shadow: 0 0 20px rgba(100, 221, 23, 0.5);
+    }
+    .btn-create:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0 30px rgba(100, 221, 23, 0.9);
+        color: #fff;
+    }
+
+    .pokemon-card {
+        position: relative;
+        border-radius: 1rem;
+        overflow: hidden;
+        background: linear-gradient(145deg, #1e2a44 0%, #0f1626 100%);
+        border: 2px solid rgba(120, 180, 255, 0.25);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4),
+                    inset 0 0 20px rgba(120, 180, 255, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+    .pokemon-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        border-color: rgba(120, 200, 255, 0.8);
+        box-shadow: 0 0 25px rgba(120, 200, 255, 0.6),
+                    0 0 50px rgba(172, 39, 181, 0.4),
+                    inset 0 0 30px rgba(120, 180, 255, 0.15);
+    }
+
+    .poke-number {
+        position: absolute;
+        top: 8px;
+        right: 10px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #7ec8ff;
+        background: rgba(0, 0, 0, 0.6);
+        padding: 3px 9px;
+        border-radius: 50px;
+        border: 1px solid rgba(126, 200, 255, 0.5);
+        z-index: 3;
+        letter-spacing: 1px;
+        font-family: 'Courier New', monospace;
+    }
+
+    .card-img-wrapper {
+        position: relative;
+        background: radial-gradient(circle at center, #2a3f66 0%, #131b2e 100%);
+        padding: 20px 10px 15px !important;
+        overflow: hidden;
+    }
+    .poke-glow {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(120, 200, 255, 0.4) 0%, transparent 70%);
+        animation: pulse 3s ease-in-out infinite;
+        pointer-events: none;
+    }
+    @keyframes pulse {
+        0%, 100% { opacity: 0.4; transform: translate(-50%, -50%) scale(1); }
+        50%      { opacity: 0.8; transform: translate(-50%, -50%) scale(1.15); }
+    }
+    .poke-img {
+        height: 110px;
+        width: auto;
+        image-rendering: pixelated;
+        position: relative;
+        z-index: 2;
+        filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.5));
+        transition: transform 0.35s ease;
+    }
+    .pokemon-card:hover .poke-img {
+        transform: scale(1.12) rotate(-4deg);
+    }
+
+    .pokemon-card .card-body {
+        background: linear-gradient(180deg, #131b2e 0%, #0a0f1a 100%);
+    }
+    .pokemon-card .card-title {
+        color: #e8f3ff;
+        font-size: 0.95rem;
+        text-transform: capitalize;
+        letter-spacing: 0.5px;
+    }
+
+    .type-badge {
+        display: inline-block;
+        font-size: 0.65rem;
+        padding: 3px 10px;
+        border-radius: 50px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin: 2px 2px;
+        color: #fff;
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+    }
+    .type-fire      { background: linear-gradient(135deg, #f12711, #f5af19); }
+    .type-water     { background: linear-gradient(135deg, #2196f3, #00bcd4); }
+    .type-grass     { background: linear-gradient(135deg, #56ab2f, #a8e063); }
+    .type-electric  { background: linear-gradient(135deg, #f7971e, #ffd200); color: #333; }
+    .type-normal    { background: linear-gradient(135deg, #bdc3c7, #7f8c8d); }
+    .type-flying    { background: linear-gradient(135deg, #7ec8ff, #b8c6db); color: #333; }
+    .type-poison    { background: linear-gradient(135deg, #8e2de2, #d53369); }
+    .type-ground    { background: linear-gradient(135deg, #d4a373, #8b5a2b); }
+    .type-rock      { background: linear-gradient(135deg, #a88560, #5e4632); }
+    .type-ice       { background: linear-gradient(135deg, #74ebd5, #9face6); color: #333; }
+    .type-fighting  { background: linear-gradient(135deg, #cb2d3e, #ef473a); }
+    .type-psychic   { background: linear-gradient(135deg, #ff6ec4, #7873f5); }
+    .type-bug       { background: linear-gradient(135deg, #a8b820, #c6d16e); color: #333; }
+    .type-ghost     { background: linear-gradient(135deg, #614385, #516395); }
+    .type-dragon    { background: linear-gradient(135deg, #3f5efb, #fc466b); }
+    .type-dark      { background: linear-gradient(135deg, #232526, #414345); }
+    .type-steel     { background: linear-gradient(135deg, #757f9a, #d7dde8); color: #333; }
+    .type-fairy     { background: linear-gradient(135deg, #ffb6c1, #ff69b4); }
+
+    .page-link {
+        background: rgba(30, 42, 68, 0.8);
+        color: #7ec8ff;
+        border: 1px solid rgba(120, 180, 255, 0.3);
+        transition: all .2s ease;
+    }
+    .page-item.active .page-link {
+        background: linear-gradient(135deg, #3b5ba7, #7ec8ff);
+        border-color: #7ec8ff;
+        color: #fff;
+        box-shadow: 0 0 12px rgba(126, 200, 255, 0.7);
+    }
+    .page-link:hover {
+        background: linear-gradient(135deg, #7ec8ff, #3b5ba7);
+        color: #fff;
+        border-color: #7ec8ff;
+    }
+    .page-item.disabled .page-link {
+        background: rgba(30, 42, 68, 0.4);
+        color: #4a5c7a;
+        border-color: rgba(120, 180, 255, 0.1);
+    }
+</style>
+
 {% endblock %}

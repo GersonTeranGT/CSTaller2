@@ -1,28 +1,117 @@
 {% extends "base.html" %}
-
 {% load bootstrap5 %}
 
 {% block title %}
-    {% if form.instance.pk %}Editar Pokémon{% else %}Crear Pokémon{% endif %}
+    {% if form.instance.pk %}Editar — {{ form.instance.name|capfirst }}{% else %}Crear Pokémon{% endif %}
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid text-center">
-    <h1>
-        {% if form.instance.pk %}
-            Editar Pokémon: {{ form.instance.name }}
-        {% else %}
-            Crear Pokémon
-        {% endif %}
-    </h1>
 
-    <form method="POST" class="form">
-        {% csrf_token %}
-        {% bootstrap_form form %}
-        {% buttons %}
-            <button type="submit" class="btn btn-success">Guardar</button>
-            <a class="btn btn-danger" href="{% url 'pokemon_list' %}">Cancelar</a>
-        {% endbuttons %}
-    </form>
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+
+        <div class="poke-form-card">
+
+            <div class="poke-form-header">
+                <h3 class="mb-0 fw-bold text-white text-center">
+                    {% if form.instance.pk %}
+                        <i class="bi bi-pencil-square"></i> Editar: {{ form.instance.name|capfirst }}
+                    {% else %}
+                        <i class="bi bi-plus-circle-fill"></i> Crear Pokémon
+                    {% endif %}
+                </h3>
+            </div>
+
+            <div class="card-body p-4">
+                <form method="POST">
+                    {% csrf_token %}
+                    {% bootstrap_form form %}
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-save fw-bold flex-grow-1">
+                            <i class="bi bi-check-circle-fill"></i> Guardar
+                        </button>
+                        <a class="btn btn-cancel fw-bold flex-grow-1" href="{% url 'pokemon_list' %}">
+                            <i class="bi bi-x-circle-fill"></i> Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
 </div>
+
+<style>
+    .poke-form-card {
+        background: linear-gradient(145deg, #1e2a44 0%, #0f1626 100%);
+        border: 2px solid rgba(120, 180, 255, 0.3);
+        border-radius: 1.2rem;
+        overflow: hidden;
+        box-shadow: 0 0 30px rgba(120, 200, 255, 0.15);
+        color: #e8f3ff;
+    }
+    .poke-form-header {
+        background: linear-gradient(135deg, #0a2a4a 0%, #1a3a6b 50%, #3b5ba7 100%);
+        padding: 22px;
+        border-bottom: 2px solid rgba(120, 200, 255, 0.4);
+    }
+
+    .poke-form-card input,
+    .poke-form-card select,
+    .poke-form-card textarea {
+        background: rgba(20, 30, 50, 0.7) !important;
+        border: 1px solid rgba(120, 180, 255, 0.3) !important;
+        color: #e8f3ff !important;
+        border-radius: 10px !important;
+        padding: 10px 14px !important;
+        transition: all 0.25s ease;
+    }
+    .poke-form-card input:focus,
+    .poke-form-card select:focus,
+    .poke-form-card textarea:focus {
+        background: rgba(20, 30, 50, 0.9) !important;
+        border-color: #7ec8ff !important;
+        box-shadow: 0 0 12px rgba(126, 200, 255, 0.5) !important;
+        color: #fff !important;
+    }
+    .poke-form-card label {
+        color: #7ec8ff !important;
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 5px;
+    }
+    .poke-form-card .form-text,
+    .poke-form-card .helptext {
+        color: #8ca3c9 !important;
+        font-size: 0.75rem;
+    }
+
+    .btn-save {
+        background: linear-gradient(135deg, #00c853 0%, #64dd17 100%);
+        border: none;
+        color: #fff;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 15px rgba(100, 221, 23, 0.4);
+    }
+    .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 25px rgba(100, 221, 23, 0.8);
+        color: #fff;
+    }
+    .btn-cancel {
+        background: transparent;
+        border: 2px solid rgba(126, 200, 255, 0.5);
+        color: #7ec8ff;
+        transition: all 0.3s ease;
+    }
+    .btn-cancel:hover {
+        background: rgba(126, 200, 255, 0.15);
+        border-color: #7ec8ff;
+        color: #fff;
+    }
+</style>
+
 {% endblock %}

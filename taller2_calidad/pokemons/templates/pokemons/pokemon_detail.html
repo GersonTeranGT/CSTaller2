@@ -1,43 +1,248 @@
 {% extends "base.html" %}
 
-{% block title %}
-{{ pokemon.name }}
-{% endblock %}
+{% block title %}{{ pokemon.name|capfirst }}{% endblock %}
 
 {% block content %}
-<div class="container-fluid text-center">
-    <h1 class="text-capitalize">{{ pokemon.name }}</h1>
 
-    <div class="row justify-content-evenly">
-        <div class="col-4">
-            <img src="{{ pokemon.image }}" alt="{{ pokemon.name }}" style="width: 300px; image-rendering: pixelated;" />
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-9">
+
+        <div class="poke-detail-card">
+
+            <div class="poke-detail-header">
+                <span class="poke-detail-id">#{{ pokemon.id|stringformat:"04d" }}</span>
+                <h2 class="poke-detail-name text-capitalize mb-0">{{ pokemon.name }}</h2>
+            </div>
+
+            <div class="card-body p-4 p-md-5">
+                <div class="row align-items-center g-4">
+
+                    <div class="col-12 col-md-5 text-center">
+                        <div class="poke-img-box">
+                            <div class="poke-img-glow"></div>
+                            <img src="{{ pokemon.image }}"
+                                 alt="{{ pokemon.name }}"
+                                 class="poke-detail-img">
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-7">
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-6">
+                                <div class="stat-card stat-height">
+                                    <div class="stat-label">Altura</div>
+                                    <div class="stat-value">{{ pokemon.height }} dm</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="stat-card stat-weight">
+                                    <div class="stat-label">Peso</div>
+                                    <div class="stat-value">{{ pokemon.weight }} hg</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <h6 class="section-label">
+                                <i class="bi bi-lightning-charge-fill"></i> Tipos
+                            </h6>
+                            <div>
+                                {% for type in pokemon.types.all %}
+                                    <span class="type-badge type-{{ type.name|lower }}">{{ type.name }}</span>
+                                {% empty %}
+                                    <em class="text-muted">Sin tipos</em>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <h6 class="section-label">
+                                <i class="bi bi-stars"></i> Habilidades
+                            </h6>
+                            <div>
+                                {% for ability in pokemon.abilities.all %}
+                                    <span class="ability-badge">{{ ability.name }}</span>
+                                {% empty %}
+                                    <em class="text-muted">Sin habilidades</em>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2">
+                            <a class="btn btn-success fw-bold" href="{% url 'pokemon_update' pokemon.id %}">
+                                <i class="bi bi-pencil-fill"></i> Editar
+                            </a>
+                            <a class="btn btn-danger fw-bold" href="{% url 'pokemon_delete' pokemon.id %}">
+                                <i class="bi bi-trash-fill"></i> Eliminar
+                            </a>
+                            <a class="btn btn-outline-info fw-bold" href="{% url 'pokemon_list' %}">
+                                <i class="bi bi-arrow-left"></i> Volver
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col-4 text-start">
-            <h3>Altura: {{ pokemon.height }} / 10 m</h3>
-            <h3>Peso: {{ pokemon.weight }} / 10 kg</h3>
 
-            <p>
-                <strong>Tipos:</strong>
-                {% for type in pokemon.types.all %}
-                {{ type.name }}{% if not forloop.last %}, {% endif %}
-                {% endfor %}
-            </p>
-
-            <p>
-                <strong>Habilidades:</strong>
-                {% for ability in pokemon.abilities.all %}
-                {{ ability.name }}{% if not forloop.last %}, {% endif %}
-                {% endfor %}
-            </p>
-
-
-            <a class="btn btn-success" href="{% url 'pokemon_update' pokemon.id %}" role="button">
-                Editar Pokémon
-            </a>
-            <a class="btn btn-primary" href="{% url 'pokemon_list' %}" role="button">
-                Regresar a la lista
-            </a>
-        </div>
     </div>
 </div>
+
+<style>
+    .poke-detail-card {
+        background: linear-gradient(145deg, #1e2a44 0%, #0f1626 100%);
+        border: 2px solid rgba(120, 180, 255, 0.3);
+        border-radius: 1.2rem;
+        overflow: hidden;
+        box-shadow: 0 0 30px rgba(120, 200, 255, 0.2),
+                    inset 0 0 40px rgba(120, 180, 255, 0.05);
+        color: #e8f3ff;
+    }
+
+    .poke-detail-header {
+        background: linear-gradient(135deg, #0a2a4a 0%, #1a3a6b 50%, #3b5ba7 100%);
+        padding: 25px 30px;
+        border-bottom: 2px solid rgba(120, 200, 255, 0.4);
+        position: relative;
+        text-align: center;
+    }
+    .poke-detail-id {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #7ec8ff;
+        background: rgba(0, 0, 0, 0.4);
+        padding: 4px 12px;
+        border-radius: 50px;
+        border: 1px solid rgba(126, 200, 255, 0.5);
+    }
+    .poke-detail-name {
+        font-weight: 800;
+        letter-spacing: 2px;
+        color: #fff;
+        text-shadow: 0 0 20px rgba(126, 200, 255, 0.8);
+    }
+
+    .poke-img-box {
+        position: relative;
+        display: inline-block;
+        padding: 25px;
+        border-radius: 1rem;
+        background: radial-gradient(circle at center, #2a3f66 0%, #131b2e 100%);
+        border: 1px solid rgba(120, 180, 255, 0.25);
+    }
+    .poke-img-glow {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(120, 200, 255, 0.4) 0%, transparent 70%);
+        animation: pulseGlow 3s ease-in-out infinite;
+        pointer-events: none;
+    }
+    @keyframes pulseGlow {
+        0%, 100% { opacity: 0.4; transform: translate(-50%, -50%) scale(1); }
+        50%      { opacity: 0.8; transform: translate(-50%, -50%) scale(1.15); }
+    }
+    .poke-detail-img {
+        height: 220px;
+        width: auto;
+        image-rendering: pixelated;
+        position: relative;
+        z-index: 2;
+        filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.6));
+        transition: transform 0.4s ease;
+    }
+    .poke-detail-img:hover {
+        transform: scale(1.08) rotate(-3deg);
+    }
+
+    .stat-card {
+        padding: 15px;
+        border-radius: 12px;
+        text-align: center;
+        border: 1px solid rgba(120, 180, 255, 0.25);
+        background: rgba(20, 30, 50, 0.7);
+        transition: all 0.3s ease;
+    }
+    .stat-card:hover {
+        border-color: rgba(126, 200, 255, 0.7);
+        box-shadow: 0 0 15px rgba(126, 200, 255, 0.3);
+        transform: translateY(-3px);
+    }
+    .stat-icon { font-size: 1.6rem; margin-bottom: 5px; }
+    .stat-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #7ec8ff;
+        font-weight: 600;
+    }
+    .stat-value {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #fff;
+        margin-top: 3px;
+    }
+
+    .section-label {
+        color: #7ec8ff;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .type-badge {
+        display: inline-block;
+        font-size: 0.8rem;
+        padding: 5px 14px;
+        border-radius: 50px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin: 2px 4px 2px 0;
+        color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+    }
+    .type-fire      { background: linear-gradient(135deg, #f12711, #f5af19); }
+    .type-water     { background: linear-gradient(135deg, #2196f3, #00bcd4); }
+    .type-grass     { background: linear-gradient(135deg, #56ab2f, #a8e063); }
+    .type-electric  { background: linear-gradient(135deg, #f7971e, #ffd200); color: #333; }
+    .type-normal    { background: linear-gradient(135deg, #bdc3c7, #7f8c8d); }
+    .type-flying    { background: linear-gradient(135deg, #7ec8ff, #b8c6db); color: #333; }
+    .type-poison    { background: linear-gradient(135deg, #8e2de2, #d53369); }
+    .type-ground    { background: linear-gradient(135deg, #d4a373, #8b5a2b); }
+    .type-rock      { background: linear-gradient(135deg, #a88560, #5e4632); }
+    .type-ice       { background: linear-gradient(135deg, #74ebd5, #9face6); color: #333; }
+    .type-fighting  { background: linear-gradient(135deg, #cb2d3e, #ef473a); }
+    .type-psychic   { background: linear-gradient(135deg, #ff6ec4, #7873f5); }
+    .type-bug       { background: linear-gradient(135deg, #a8b820, #c6d16e); color: #333; }
+    .type-ghost     { background: linear-gradient(135deg, #614385, #516395); }
+    .type-dragon    { background: linear-gradient(135deg, #3f5efb, #fc466b); }
+    .type-dark      { background: linear-gradient(135deg, #232526, #414345); }
+    .type-steel     { background: linear-gradient(135deg, #757f9a, #d7dde8); color: #333; }
+    .type-fairy     { background: linear-gradient(135deg, #ffb6c1, #ff69b4); }
+
+    .ability-badge {
+        display: inline-block;
+        font-size: 0.8rem;
+        padding: 5px 14px;
+        border-radius: 50px;
+        font-weight: 600;
+        margin: 2px 4px 2px 0;
+        background: linear-gradient(135deg, #7ec8ff, #3b5ba7);
+        color: #fff;
+        box-shadow: 0 0 10px rgba(126, 200, 255, 0.4);
+    }
+</style>
+
 {% endblock %}
